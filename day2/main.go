@@ -56,7 +56,7 @@ func inputToSlice() []Input {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		temp := strings.Split(scanner.Text(), " ")
-		min, max := defineRange(temp[0])
+		min, max := findRange(temp[0])
 		target := string(temp[1][0])
 		password := temp[2]
 		instance := Input{min, max, target, password}
@@ -66,7 +66,7 @@ func inputToSlice() []Input {
 	return out
 }
 
-func defineRange(str string) (int, int) {
+func findRange(str string) (int, int) {
 	i := strings.Index(str, "-")
 	min, _ := strconv.Atoi(str[:i])
 	max, _ := strconv.Atoi(str[i+1:])
