@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -47,7 +48,22 @@ func isValidYear(year string, minYear int, maxYear int) bool {
 //   If cm, the number must be at least 150 and at most 193.
 //   If in, the number must be at least 59 and at most 76.
 func isValidHgt(hgt string) bool {
-	// TODO: Open to implement!
+	if len(hgt) == 0 {
+		return false
+	}
+	heightRegEx := regexp.MustCompile("([0-9]+)([a-z]+)")
+	matches := heightRegEx.FindStringSubmatch(hgt)
+	if len(matches) != 3 {
+		return false
+	}
+	size, _ := strconv.Atoi(matches[1])
+	measure := matches[2]
+	if measure == "cm" && (size < 150 || size > 193) {
+		return false
+	}
+	if measure == "in" && (size < 59 || size > 76) {
+		return false
+	}
 	return true
 }
 
@@ -56,7 +72,12 @@ func isValidHcl(hcl string) bool {
 	if len(hcl) != 7 || string(hcl[0]) != "#" {
 		return false
 	}
-	// TODO: Open to implement!
+	alphanum := "abcdef0123456789"
+	for i := 1; i < len(hcl); i++ {
+		if !strings.Contains(alphanum, string(hcl[i])) {
+			return false
+		}
+	}
 	return true
 }
 
@@ -79,8 +100,8 @@ func isValidPid(pid string) bool {
 	if len(pid) != 9 {
 		return false
 	}
-	// TODO: Open to implement!
-	return true
+	_, err := strconv.Atoi(pid)
+	return err == nil
 }
 
 func CountValidPassports(passports []Passport) int {
