@@ -5,96 +5,65 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 func main() {
-	bags := inputToMap()
-	for color, bag := range bags {
-		fmt.Println(color, bag.children)
-	}
-	fmt.Println("Part One - Num of Bags: ", CountNumValidBags(bags))
+	connections := inputToMap() // 594
+	fmt.Println(CountValidBags(connections))
 }
 
-func CountNumValidBags(adjList map[string]*Bag) int {
+func CountValidBags(connections map[string]map[string]int) int {
 	count := 0
-	for _, curr := range adjList {
-		if curr.color == "shinygold" {
-			continue
-		}
-		if helper(curr, adjList) {
+	for color := range connections {
+		if color != "shiny gold" && isValid(color, connections) {
 			count++
 		}
 	}
 	return count
 }
 
-func helper(curr *Bag, adjList map[string]*Bag) bool {
-	if adjList[curr.color].color == "shinygold" {
+func isValid(curr string, connections map[string]map[string]int) bool {
+	if curr == "shiny gold" {
 		return true
 	}
-	for _, child := range curr.children {
-		return helper(child, adjList)
+	children := connections[curr]
+	if len(children) == 0 {
+		return false
+	}
+	for child := range children {
+		return isValid(child, connections)
 	}
 	return false
 }
 
-type Bag struct {
-	color    string
-	children []*Bag
-}
-
-func newBag(color string) *Bag {
-	return &Bag{color, make([]*Bag, 0)}
-}
-
-func (b *Bag) String() string {
-	return fmt.Sprintf("%s", b.color)
-}
-
-func (b *Bag) addChild(bag *Bag) {
-	b.children = append(b.children, bag)
-}
-
-func inputToMap() map[string]*Bag {
+func inputToMap() map[string]map[string]int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	bags := make(map[string]*Bag, 0)
+	connections := make(map[string]map[string]int, 0)
 	scanner := bufio.NewScanner(file)
+	var a []string
 
 	for scanner.Scan() {
 		line := strings.Split(scanner.Text(), " ")
-		color := line[0] + line[1]
-
-		var curr *Bag
-		if bag, ok := bags[color]; ok {
-			curr = bag
-		} else {
-			curr = newBag(color)
-		}
-
+		color := line[0] + " " + line[1]
+		connections[color] = make(map[string]int, 0)
 		for i := 4; i < len(line); i += 4 {
 			if line[i] == "no" {
 				break
 			}
-			child := addChildToBags(i, line, bags)
-			curr.addChild(child)
+			count, _ := strconv.Atoi(line[i])
+			nestedColor := line[i+1] + " " + line[i+2]
+			connections[color][nestedColor] = count
 		}
-		bags[color] = curr
+
+		a = append(a, color)
 	}
 
-	return bags
-}
-
-func addChildToBags(i int, line []string, bags map[string]*Bag) *Bag {
-	color := line[i+1] + line[i+2]
-	if _, ok := bags[color]; ok {
-		return bags[color]
-	}
-	bags[color] = newBag(color)
-	return bags[color]
+	return connections
 }
