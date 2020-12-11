@@ -53,7 +53,7 @@ faded silver bags contain 1 posh turquoise bag, 5 posh white bags, 5 wavy lime b
 mirrored tomato bags contain 3 dotted tomato bags, 4 vibrant blue bags, 4 dull yellow bags, 5 clear chartreuse bags.
 pale red bags contain 5 vibrant indigo bags, 4 vibrant red bags, 3 bright magenta bags, 3 dim indigo bags.
 drab blue bags contain 2 bright magenta bags.
-dim purple bags contain 4 drab lavender bags, 4 plaid yellow bags, 5 dll white bags, 3 clear white bags.
+dim purple bags contain 4 drab lavender bags, 4 plaid yellow bags, 5 dull white bags, 3 clear white bags.
 dim red bags contain 5 striped silver bags, 1 shiny red bag.
 dim lime bags contain 5 plaid bronze bags, 5 drab salmon bags.
 mirrored beige bags contain 3 bright tomato bags, 2 dull lime bags.
