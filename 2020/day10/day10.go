@@ -5,10 +5,33 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
 func main() {
+	adapters := inputToSlice()
+	fmt.Println("Part One - Product Of Jolt Differences:", ProductOfJoltDiffs(adapters))
+}
+
+func ProductOfJoltDiffs(adapters []int) int {
+	diffs := getJoltDifferences(adapters)
+	return diffs[0] * diffs[2]
+}
+
+func getJoltDifferences(adapters []int) []int {
+	sort.Ints(adapters)
+	diffs := []int{0, 0, 0}
+	adapters = append(adapters, adapters[len(adapters)-1]+3)
+
+	curr := 0
+	for _, num := range adapters {
+		diff := num - curr
+		diffs[diff-1]++
+		curr = num
+	}
+
+	return diffs
 }
 
 func inputToSlice() []int {
@@ -28,3 +51,6 @@ func inputToSlice() []int {
 
 	return nums
 }
+
+// 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19
+// 0, 1, 4, 5, 6, 7,  10, 11, 12, 15, 16, 19, 22
