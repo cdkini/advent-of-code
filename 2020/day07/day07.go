@@ -12,15 +12,23 @@ import (
 func main() {
 	connections, bagCounts := inputToMap() // 594
 	fmt.Println("Part One - Valid Bags:", CountValidBags(connections))
-	fmt.Println("Part Two - Nested Bags:", CountNestedBags(connections, bagCounts))
+	fmt.Println("Part Two - Nested Bags:", CountNestedBags(bagCounts))
 }
 
-func CountNestedBags(connections map[string][]string, bagCounts map[string]int) int {
-	return countNestedBags("shiny gold", connections, bagCounts, 0)
+func CountNestedBags(bagCounts map[string]map[string]int) int {
+	return countNestedBags("shiny gold", bagCounts)
 }
 
-func countNestedBags(curr string, connections map[string][]string, bagCounts map[string]int, count int) int {
-	return 0 // TODO: Open to implement
+func countNestedBags(curr string, bagCounts map[string]map[string]int) int {
+	if len(bagCounts[curr]) == 0 {
+		return 0
+	}
+	contents := bagCounts[curr]
+	numBags := 0
+	for bag, count := range contents {
+		numBags += (count * countNestedBags(bag, bagCounts)) + count
+	}
+	return numBags
 }
 
 func CountValidBags(connections map[string][]string) int {
@@ -40,7 +48,7 @@ func countValidBags(curr string, valid map[string]bool, connections map[string][
 	return len(valid)
 }
 
-func inputToMap() (map[string][]string, map[string]int) {
+func inputToMap() (map[string][]string, map[string]map[string]int) {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -48,20 +56,20 @@ func inputToMap() (map[string][]string, map[string]int) {
 	defer file.Close()
 
 	connections := make(map[string][]string, 0)
-	bagCounts := make(map[string]int, 0)
+	bagCounts := make(map[string]map[string]int, 0)
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := strings.Split(scanner.Text(), " ")
 		parent := line[0] + " " + line[1]
-		bagCounts[parent] = 0
+		bagCounts[parent] = make(map[string]int, 0)
 		for i := 4; i < len(line); i += 4 {
 			if line[i] == "no" {
 				break
 			}
 			count, _ := strconv.Atoi(line[i])
-			bagCounts[parent] += count
 			child := line[i+1] + " " + line[i+2]
+			bagCounts[parent][child] = count
 
 			if _, ok := connections[child]; !ok {
 				connections[child] = make([]string, 0)
